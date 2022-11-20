@@ -7,11 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      CCACHE_DIR: ${{ github.workspace }}/.ccache
-      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
-      CCACHE_NOHASHDIR: true
-      CCACHE_MAXSIZE: 1G
     steps:
       - uses: actions/checkout@v3
         with:
@@ -26,18 +21,6 @@ jobs:
       - name: Retrieve version
         run: |
           echo VERSION=$(echo ${{ github.event.head_commit.id }} | head -c 10) >> $GITHUB_ENV
-      - name: Set up ccache
-        uses: hendrikmuhs/ccache-action@v1.2
-        with:
-          key: ${{ runner.os }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}
-      - name: Cache gradle build
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches/build-cache-*
-          key: gradle-builds-${{ github.sha }}
-          restore-keys: gradle-builds
       - name: Build with Gradle
         run: |
           echo 'org.gradle.caching=true' >> gradle.properties
@@ -54,19 +37,3 @@ jobs:
           path: |
               ${{ github.workspace }}/app/build/outputs/apk
               ${{ github.workspace }}/app/build/outputs/mapping
-      - name: Post to channel
-        if: github.ref == 'refs/heads/master'
-        env:
-          CHANNEL_ID: ${{ secrets.TELEGRAM_TO }}
-          BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-          FILE: ${{ github.workspace }}/app/release/BiliRoaming_${{ env.VERSION }}.apk
-          COMMIT_MESSAGE: |+
-            New push to github\!
-            ```
-            ${{ github.event.head_commit.message }}
-            ```by `${{ github.event.head_commit.author.name }}`
-            See commit detail [here](${{ github.event.head_commit.url }})
-            Snapshot apk is attached \(unsupported by TAICHI\)
-        run: |
-          ESCAPED=`python3 -c 'import json,os,urllib.parse; print(urllib.parse.quote(json.dumps(os.environ["COMMIT_MESSAGE"])))'`
-          curl -v "https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup?chat_id=${CHANNEL_ID}&media=%5B%7B%22type%22:%22document%22,%20%22media%22:%22attach://release%22,%22parse_mode%22:%22MarkdownV2%22,%22caption%22:${ESCAPED}%7D%5D"  -F release="@$FILE"
