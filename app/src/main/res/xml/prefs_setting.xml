@@ -380,7 +380,8 @@
         <Preference
             android:key="version"
             android:title="@string/version" />
-
+        </Preference>
+        
     </PreferenceCategory>
 
 </PreferenceScreen>
