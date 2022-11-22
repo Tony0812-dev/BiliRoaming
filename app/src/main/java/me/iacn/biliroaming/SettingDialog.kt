@@ -308,13 +308,6 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
             return true
         }
 
-        private fun onUpdateClick(): Boolean {
-            val uri = Uri.parse(context.getString(R.string.update_url))
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
-            return true
-        }
-
         private fun onCustomServerClick(): Boolean {
             AlertDialog.Builder(activity).run {
                 val layout = moduleRes.getLayout(R.layout.customize_backup_dialog)
@@ -340,11 +333,6 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
                         else
                             prefs.edit().remove(it.tag.toString()).apply()
                     }
-                }
-                setNegativeButton("获取公共解析服务器") { _, _ ->
-                    val uri = Uri.parse(context.getString(R.string.server_url))
-                    val intent = Intent(Intent.ACTION_VIEW, uri)
-                    startActivity(intent)
                 }
                 show()
             }
