@@ -95,14 +95,6 @@ class MainActivity : Activity() {
             }
         }
 
-
-        private fun onUpdateCheck(): Boolean {
-            val uri = Uri.parse(resources.getString(R.string.update_url))
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
-            return true
-        }
-
         private fun onFeatureClick(): Boolean {
             AlertDialog.Builder(activity).run {
                 setView(View.inflate(activity, R.layout.feature, null))
