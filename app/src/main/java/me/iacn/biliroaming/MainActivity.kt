@@ -26,11 +26,6 @@ import me.iacn.biliroaming.utils.fetchJson
 import java.io.InputStream
 
 
-/**
- * Created by iAcn on 2019/3/23
- * Email i@iacn.me
- */
-
 class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +47,6 @@ class MainActivity : Activity() {
             findPreference("version").summary = BuildConfig.VERSION_NAME
             findPreference("feature").onPreferenceClickListener = this
             findPreference("setting").onPreferenceClickListener = this
-            checkUpdate()
         }
 
         @Deprecated("Deprecated in Java")
@@ -101,21 +95,6 @@ class MainActivity : Activity() {
             }
         }
 
-        private fun checkUpdate() = scope.launch {
-            val result = fetchJson(resources.getString(R.string.version_url)) ?: return@launch
-            val newestVer = result.optString("name")
-            if (newestVer.isNotEmpty() && BuildConfig.VERSION_NAME != newestVer) {
-                findPreference("version").summary = "${BuildConfig.VERSION_NAME}（最新版$newestVer）"
-                (findPreference("about") as PreferenceCategory).addPreference(Preference(activity).apply {
-                    key = "update"
-                    title = resources.getString(R.string.update_title)
-                    summary = result.optString("body").substringAfterLast("更新日志\r\n")
-                        .ifEmpty { resources.getString(R.string.update_summary) }
-                    onPreferenceClickListener = this@PrefsFragment
-                    order = 1
-                })
-            }
-        }
 
         private fun onUpdateCheck(): Boolean {
             val uri = Uri.parse(resources.getString(R.string.update_url))
@@ -153,7 +132,6 @@ class MainActivity : Activity() {
 
         @Deprecated("Deprecated in Java")
         override fun onPreferenceClick(preference: Preference?) = when (preference?.key) {
-            "update" -> onUpdateCheck()
             "feature" -> onFeatureClick()
             "setting" -> onSettingClick()
             else -> false
