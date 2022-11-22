@@ -27,12 +27,11 @@ jobs:
           echo 'org.gradle.vfs.watch=true' >> gradle.properties
           echo 'org.gradle.jvmargs=-Xmx2048m' >> gradle.properties
           echo 'android.native.buildOutput=verbose' >> gradle.properties
-          ./gradlew -PappVerName=${{ env.VERSION }} assembleRelease assembleDebug -debug
+          ./gradlew -PappVerName=${{ env.VERSION }} assembleRelease assembleDebug
       - name: Upload built apk
         if: success()
         uses: actions/upload-artifact@v3
         with:
           name: snapshot
           path: |
-              ${{ github.workspace }}/app/build/outputs/apk
-              ${{ github.workspace }}/app/build/outputs/mapping
+              ${{ github.workspace }}/app/build/outputs
