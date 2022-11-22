@@ -84,36 +84,12 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
             findPreference("add_custom_button")?.onPreferenceClickListener = this
             findPreference("customize_dynamic")?.onPreferenceClickListener = this
             checkCompatibleVersion()
-            checkUpdate()
         }
 
         @Deprecated("Deprecated in Java")
         override fun onDestroy() {
             super.onDestroy()
             scope.cancel()
-        }
-
-        private fun checkUpdate() {
-            val url = URL(context.getString(R.string.version_url))
-            scope.launch {
-                val result = fetchJson(url) ?: return@launch
-                val newestVer = result.optString("name")
-                if (newestVer.isNotEmpty() && BuildConfig.VERSION_NAME != newestVer) {
-                    findPreference("version").summary = "${BuildConfig.VERSION_NAME}（最新版$newestVer）"
-                    (findPreference("about") as PreferenceCategory).addPreference(
-                        Preference(
-                            activity
-                        ).apply {
-                            key = "update"
-                            title = context.getString(R.string.update_title)
-                            summary = result.optString("body").substringAfterLast("更新日志\r\n").run {
-                                ifEmpty { context.getString(R.string.update_summary) }
-                            }
-                            onPreferenceClickListener = this@PrefsFragment
-                            order = 1
-                        })
-                }
-            }
         }
 
         private fun checkCompatibleVersion() {
