@@ -106,7 +106,6 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
             findPreference("filter_comment")?.onPreferenceClickListener = this
             checkCompatibleVersion()
             searchItems = retrieve(preferenceScreen)
-            checkUpdate()
         }
 
         @Deprecated("Deprecated in Java")
@@ -215,30 +214,7 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
                     prefs.edit().putString("upos_host", defaultServer).apply()
                 }
             }
-        }
-
-        private fun checkUpdate() {
-            val url = URL(context.getString(R.string.version_url))
-            scope.launch {
-                val result = fetchJson(url) ?: return@launch
-                val newestVer = result.optString("name")
-                val versionName = BuildConfig.VERSION_NAME
-                if (newestVer.isNotEmpty() && versionName != newestVer) {
-                    searchItems.forEach { it.restore() }
-                    findPreference("version").summary = "${versionName}（最新版$newestVer）"
-                    (findPreference("about") as PreferenceCategory).addPreference(
-                        Preference(activity).apply {
-                            key = "update"
-                            title = context.getString(R.string.update_title)
-                            summary = result.optString("body").substringAfterLast("更新日志\r\n")
-                                .ifEmpty { context.getString(R.string.update_summary) }
-                            onPreferenceClickListener = this@PrefsFragment
-                            order = 1
-                        })
-                    searchItems = retrieve(preferenceScreen)
-                }
-            }
-        }
+        } 
 
         private fun checkCompatibleVersion() {
             val versionCode = getVersionCode(packageName)
@@ -464,13 +440,6 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
                 Log.toast("再按${7 - counter}次开启隐藏功能", true)
             }
 
-            return true
-        }
-
-        private fun onUpdateClick(): Boolean {
-            val uri = Uri.parse(context.getString(R.string.update_url))
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
             return true
         }
 
