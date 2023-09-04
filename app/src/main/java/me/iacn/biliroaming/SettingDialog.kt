@@ -814,7 +814,6 @@ class SettingDialog(context: Context) : AlertDialog.Builder(context) {
         @Deprecated("Deprecated in Java")
         override fun onPreferenceClick(preference: Preference) = when (preference.key) {
             "version" -> onVersionClick()
-            "update" -> onUpdateClick()
             "custom_server" -> onCustomServerClick()
             "test_upos" -> onTestUposClick()
             "customize_bottom_bar" -> onCustomizeBottomBarClick()
