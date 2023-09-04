@@ -65,7 +65,6 @@ class XposedInit : IXposedHookLoadPackage, IXposedHookZygoteInit {
                                         !sPrefs.getString("cn_server", null).isNullOrEmpty())
                             ) ""
                             else "。\n但未启用番剧解锁功能，请检查解析服务器设置。"
-                        }
                     )
 
                     country = MainScope().future(Dispatchers.IO) {
